@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { deleteMovie, getMovies, store, updateMovie } from "../controllers/MovieControllers.js";
+import { deleteMovie, getMovies, moviePage, searchMovie, store, updateMovie } from "../controllers/MovieControllers.js";
 
 const router = Router();
 
@@ -15,5 +15,11 @@ router.put("/:id", updateMovie);
 
 //delete movie
 router.delete("/delete/:id", deleteMovie);
+
+// get movies data by pagination
+router.get("/with/page", moviePage);
+
+// search feature
+router.get("/by/search", searchMovie);
 
 export default router;

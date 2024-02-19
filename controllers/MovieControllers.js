@@ -68,3 +68,52 @@ export const deleteMovie = async (req, res) => {
 
     return res.json({status: 200, message: "movie deleted"});
 }
+
+//here we will create new route which will get all movies but it will show the data in pagination
+export const moviePage = async (req, res) => {
+    const page = Number(req.query.page) || 1
+    const limit = Number(req.query.limit) || 10
+
+    if(page <= 0){
+        page = 1
+    }
+
+    if(limit <= 0 || limit > 100){
+        limit = 10
+    }
+
+    // skip count
+    const skip = (page - 1) * limit
+
+    const movies = await prisma.movie.findMany({
+        take: limit,
+        skip: skip,
+        select:{
+            name: true,
+        }
+    })
+
+    const totalMovies = await prisma.movie.count();
+    const totalPages = await Math.ceil(totalMovies / limit);
+
+    return res.json({status: 200, movies, metadata:{ totalMovies, totalPages, currentPage:page, currentLimit: limit }})
+} 
+
+//now we will create the new route for searching 
+export const searchMovie = async (req, res) => {
+    const query = req.query.q;
+
+    const movies = await prisma.movie.findMany({
+        where: {
+            name: {
+                contains: query,
+                mode: "insensitive"
+                // startsWith: query
+                // endsWith: query
+                // equals: query
+            }
+        }
+    })
+
+    return res.json({status: 200, movies})
+}

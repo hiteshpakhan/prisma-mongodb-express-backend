@@ -2,7 +2,11 @@ import prisma from "../DB/db.config.js";
 
 // for getting all the cast
 export const getCasts = async(req, res)=>{
-    const casts = await prisma.cast.findMany({});
+    const casts = await prisma.cast.findMany({
+        // include: {
+        //     movie: true,    // here we want to get all cast with there movie
+        // }
+    });
 
     return res.json({status: 200, data: casts})
 }
